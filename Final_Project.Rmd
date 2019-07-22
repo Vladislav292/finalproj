@@ -12,6 +12,7 @@ Chinese characters were removced to avoid encoding and compatibility issue
 ```{r warning=FALSE,message=FALSE} 
 rm(list=ls())
 library(readr)
+library(tidyverse )
 crimerate <- read_csv("https://raw.githubusercontent.com/Vladislav292/2019summer-datasciece/master/vands.csv")
 head(crimerate)
 library(dplyr)
@@ -29,5 +30,8 @@ data_merged <-merge(crimerate, GDP)
 data_merged = data_merged[,-17]
 
 head(data_merged)
-?merge
+```
+
+```{r}
+ggplot(data=data_merged)+ geom_line(mapping=aes(x=year,y=total1))+ geom_point(mapping = aes(x=year,y=total1))
 ```
