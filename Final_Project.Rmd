@@ -1,0 +1,33 @@
+---
+title: "Relationship Between Crime Rate and Gross Domastic Product in Taiwan"
+author: "Christine Hsieh, May Huang, Yi-Fang Lo"
+date: "7/22/2019"
+output: html_document
+---
+# Data about Crimes committed in Taiwan
+First import the data about crimes in Taiwan
+[source]()
+Chinese characters were removced to avoid encoding and compatibility issue
+
+```{r warning=FALSE,message=FALSE} 
+rm(list=ls())
+library(readr)
+crimerate <- read_csv("https://raw.githubusercontent.com/Vladislav292/2019summer-datasciece/master/vands.csv")
+head(crimerate)
+library(dplyr)
+```
+Then import the data about Taiwan's GDP
+[source]()
+```{r warning=FALSE,message=FALSE}
+GDP <- read_csv("https://raw.githubusercontent.com/Vladislav292/2019summer-datasciece/master/GDP.csv", )
+head(GDP)
+```
+
+Merge the two sets of data by the parameter "Year"
+```{r warning=FALSE,message=FALSE}
+data_merged <-merge(crimerate, GDP)
+data_merged = data_merged[,-17]
+
+head(data_merged)
+?merge
+```
