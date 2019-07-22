@@ -4,4 +4,3 @@
 # Hyperlinks
 [CRIME](https://raw.githubusercontent.com/Vladislav292/2019summer-datasciece/master/GDP.csv)<br/>
 [GDP](https://raw.githubusercontent.com/Vladislav292/2019summer-datasciece/master/GDP.csv)
-gggggggg
