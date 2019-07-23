@@ -26,8 +26,7 @@ head(GDP)
 
 Merge the two sets of data by the parameter "Year"
 ```{r warning=FALSE,message=FALSE}
-data_merged <-merge(crimerate, GDP)
-data_merged = data_merged[,-17]
+data_merged <-merge(crimerate, GDP,by="year")
 
 head(data_merged)
 ```
@@ -35,3 +34,105 @@ head(data_merged)
 ```{r}
 ggplot(data=data_merged)+ geom_line(mapping=aes(x=year,y=total1))+ geom_point(mapping = aes(x=year,y=total1))
 ```
+
+ Secondly, let us draw a graph to visualize the relationship between GDP and year
+ 
+```{r}
+ggplot(data=data_merged,mapping=aes(x=year, y = GDP)) + geom_point() + geom_line()
+```
+
+It is not difficult to see that our crime rate fluctuated while the GDP grew relatively steadily with time.
+To see if crime rate is associated with our economic performance, let us draw a graph to visulaize the Crime-GDP relationship.
+
+```{r}
+ggplot(data=data_merged,mapping=aes(x=GDP, y =total1 )) + geom_point() + geom_smooth()
+```
+
+The relation, quite disappointing since we expected that crime rate should have negative correlation with GDP. <br/>
+However, the more we ponder on our hypothesis, it is not difficult to find that crimes take in lots of forms and we should find only a fraction of them which should be highly related to economic circumstance-larcency. <br/>
+As a result, we made a graph to visulize the GDP-larceny relationship
+```{r}
+ggplot(data=data_merged, mapping = aes(x=GDP,y=larceny1)) +geom_point()+geom_smooth()
+```
+```{r}
+ggplot(data=data_merged, mapping = aes(x=di,y=totaler)) +geom_point()+geom_smooth()
+```
+
+The result shocked us again. So,we turned to annother factor that we believed would affect crime rate- education degree.
+Let's first import the data we need.
+```{r}
+edu <- read.csv("https://raw.githubusercontent.com/ChristineHsieh1231/mii/master/Educational%20Attainment.csv")
+edu = filter(edu, Year<2017)
+edu = filter(edu, Year>1996)
+crimeb = filter(crimerate, year>1996)
+crimeb = filter(crimeb, year<2017)
+edu = edu %>%
+  rename(
+    year = Year,
+    t = X,
+    m = X.1,
+    f = X.2,
+    t0 = X.3,
+    m0 = X.4,
+    f0 = X.5,
+    s = X.6,
+    ms = X.7,
+    fs = X.8,
+    t1 =  X.9,
+    m1 = X.10,
+    f1 = X.11,
+    t2 = X.12,
+    m2 = X.13,
+    f2 = X.14,
+    t3 = X.15, 
+    m3 = X.16,
+    f3 = X.17,
+    t4 = X.18,
+    m4 = X.19,
+    f4 = X.20,
+    t5 = X.21,
+    m5 = X.22,
+    f5 = X.23,
+    t8 = X.24,
+    m8 = X.25,
+    f8 = X.26
+    
+  )
+    
+   
+```
+
+```{r}
+ggplot(data = edu)+
+geom_line(mapping=aes(x=year,y=t,group=1))+geom_point(mapping = aes(x=year,y=t))
+```
+
+
+
+```{r}
+edu0 = edu %>% select(year,t0,m0,f0) %>% 
+    mutate(class = "illiterate") %>% rename(t=t0, m=m0,f=f0)
+edu1 = edu %>% select(year,t1,m1,f1) %>%
+    mutate(class = "primary")%>% rename(t=t1, m=m1,f=f1)
+edu2 = edu %>% select(year,t2,m2,f2) %>%
+    mutate(class = "junior")%>% rename(t=t2, m=m2,f=f2)
+edu3 = edu %>% select(year,t3,m3,f3) %>%
+    mutate(class = "senior")%>% rename(t=t3, m=m3,f=f3)
+edu4 = edu %>% select(year,t4,m4,f4) %>%
+    mutate(class = "undergrad")%>% rename(t=t4, m=m4,f=f4)
+edu5 = edu %>% select(year,t5,m5,f5) %>%
+    mutate(class = "grad")%>% rename(t=t5, m=m5,f=f5)
+edus = edu %>% select(year,s,ms,fs) %>%
+    mutate(class = "self")%>% rename(t=s, m=ms,f=fs)
+edu8 = edu %>% select(year,t8,m8,f8) %>%
+    mutate(class = "other")%>% rename(t=t8, m=m8,f=f8)
+edue = rbind(edu0,edu1,edu2,edu3,edu4,edu5,edus,edu8)
+write.csv(edue,file="C:/Users/E15_W7/Desktop/edue.csv",row.names = FALSE)
+```
+
+```{r}
+ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
+  geom_line()+
+  geom_point()
+```
+
