@@ -152,4 +152,24 @@ fig=ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
   geom_point()
 fig
 ```
+```{r}
 
+gender<-edue %>%
+  select(year,t,m,f,class) %>% 
+    mutate(fp = f / t, mp = m / t)
+
+
+sex<-gender%>%
+  group_by(fp,mp)
+
+CLASS<- factor(gender$class, levels = c("illiterate","primary", "junior", "	senior", "undergrad", "grad","self","other" ), ordered = TRUE )
+
+```
+
+
+
+
+```{r}
+ggplot(data = gender, aes(x=class, y=fp),group=sex) 
+  +geom_boxplot()
+```
