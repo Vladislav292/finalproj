@@ -132,7 +132,7 @@ ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
 ```{r}
 gender<-edu %>%
   select(year,t,m,f) %>% 
-    mutate(fp = f / t, mp = m / t)
+    mutate(fp = (f / t)*100, mp = (m / t)*100)
 gendera= gender %>% select(year,fp)%>% mutate(gender="female")%>% rename(p=fp)
 genderb= gender %>% select(year,mp)%>% mutate(gender="male")%>% rename(p=mp)
 gender= rbind(gendera,genderb)
