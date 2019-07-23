@@ -13,53 +13,18 @@ Chinese characters were removced to avoid encoding and compatibility issue
 rm(list=ls())
 library(readr)
 library(tidyverse )
-crimerate <- read_csv("https://raw.githubusercontent.com/Vladislav292/2019summer-datasciece/master/vands.csv")
-head(crimerate)
+
 library(dplyr)
 ```
-Then import the data about Taiwan's GDP
-[source]()
-```{r warning=FALSE,message=FALSE}
+
+
+```{r}
 GDP <- read_csv("https://raw.githubusercontent.com/Vladislav292/2019summer-datasciece/master/GDP.csv", )
 head(GDP)
 ```
 
-Merge the two sets of data by the parameter "Year"
-```{r warning=FALSE,message=FALSE}
-data_merged <-merge(crimerate, GDP,by="year")
 
-head(data_merged)
-```
 
-```{r}
-ggplot(data=data_merged)+ geom_line(mapping=aes(x=year,y=total1))+ geom_point(mapping = aes(x=year,y=total1))
-```
-
- Secondly, let us draw a graph to visualize the relationship between GDP and year
- 
-```{r}
-ggplot(data=data_merged,mapping=aes(x=year, y = GDP)) + geom_point() + geom_line()
-```
-
-It is not difficult to see that our crime rate fluctuated while the GDP grew relatively steadily with time.
-To see if crime rate is associated with our economic performance, let us draw a graph to visulaize the Crime-GDP relationship.
-
-```{r}
-ggplot(data=data_merged,mapping=aes(x=GDP, y =total1 )) + geom_point() + geom_smooth()
-```
-
-The relation, quite disappointing since we expected that crime rate should have negative correlation with GDP. <br/>
-However, the more we ponder on our hypothesis, it is not difficult to find that crimes take in lots of forms and we should find only a fraction of them which should be highly related to economic circumstance-larcency. <br/>
-As a result, we made a graph to visulize the GDP-larceny relationship
-```{r}
-ggplot(data=data_merged, mapping = aes(x=GDP,y=larceny1)) +geom_point()+geom_smooth()
-```
-```{r}
-ggplot(data=data_merged, mapping = aes(x=di,y=totaler)) +geom_point()+geom_smooth()
-```
-
-The result shocked us again. So,we turned to annother factor that we believed would affect crime rate- education degree.
-Let's first import the data we need.
 ```{r}
 edu <- read_csv("https://raw.githubusercontent.com/ChristineHsieh1231/mii/master/Educational%20Attainment.csv", 
      col_types = cols(X10 = col_number(), 
@@ -78,8 +43,6 @@ edu <- read_csv("https://raw.githubusercontent.com/ChristineHsieh1231/mii/master
          X8 = col_number(), X9 = col_number()))
 edu = filter(edu, Year<2017)
 edu = filter(edu, Year>1996)
-crimeb = filter(crimerate, year>1996)
-crimeb = filter(crimeb, year<2017)
 edu = edu %>%
   rename(
     year = Year,
@@ -116,9 +79,24 @@ edu = edu %>%
    
 ```
 
+
+```{r warning=FALSE,message=FALSE}
+data_merged <-merge(edu, GDP,by="year")
+head(data_merged)
+```
+
+
+
+
+
 ```{r}
-ggplot(data = edu)+
-geom_line(mapping=aes(x=year,y=t,group=1))+geom_point(mapping = aes(x=year,y=t))
+ggplot(data = data_merged)+
+geom_line(mapping=aes(x=year,y=GDP,group=1))+geom_point(mapping = aes(x=year,y=GDP))
+```
+
+```{r}
+ggplot(data = data_merged)+
+geom_line(mapping=aes(x=GDP,y=t,group=1))+geom_point(mapping = aes(x=GDP,y=t))
 ```
 
 
@@ -141,35 +119,43 @@ edus = edu %>% select(year,s,ms,fs) %>%
 edu8 = edu %>% select(year,t8,m8,f8) %>%
     mutate(class = "other")%>% rename(t=t8, m=m8,f=f8)
 edue = rbind(edu0,edu1,edu2,edu3,edu4,edu5,edus,edu8)
-
 head(edue)
-
 ```
 
 ```{r}
-fig=ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
+ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
   geom_line()+
   geom_point()
-fig
 ```
-```{r}
 
-gender<-edue %>%
-  select(year,t,m,f,class) %>% 
+
+```{r}
+gender<-edu %>%
+  select(year,t,m,f) %>% 
     mutate(fp = f / t, mp = m / t)
+gendera= gender %>% select(year,fp)%>% mutate(gender="female")%>% rename(p=fp)
+genderb= gender %>% select(year,mp)%>% mutate(gender="male")%>% rename(p=mp)
+gender= rbind(gendera,genderb)
+
+ggplot(data = gender,aes(x=year,y=p,group=gender,color=gender))+
+geom_line()+
+geom_point()
 
 
-sex<-gender%>%
-  group_by(fp,mp)
-
-CLASS<- factor(gender$class, levels = c("illiterate","primary", "junior", "	senior", "undergrad", "grad","self","other" ), ordered = TRUE )
+```
+```{r}
+sigma=data.frame(colSums(edu[,-1]))
 
 ```
 
 
-
-
 ```{r}
-ggplot(data = gender, aes(x=class, y=fp),group=sex) 
-  +geom_boxplot()
+
+edumale = edue %>% select(year,m,t,class) %>% 
+    mutate(gender = "male") %>% rename(count = m)
+edufemale = edue %>% select(year,f,t,class) %>%
+    mutate(gender = "female") %>%rename(count = f)
+edugen = rbind(edumale,edufemale)
+edugen=edugen%>% mutate(p=count/t)
+head(edugen)
 ```
