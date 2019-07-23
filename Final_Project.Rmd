@@ -61,7 +61,21 @@ ggplot(data=data_merged, mapping = aes(x=di,y=totaler)) +geom_point()+geom_smoot
 The result shocked us again. So,we turned to annother factor that we believed would affect crime rate- education degree.
 Let's first import the data we need.
 ```{r}
-edu <- read.csv("https://raw.githubusercontent.com/ChristineHsieh1231/mii/master/Educational%20Attainment.csv")
+edu <- read_csv("https://raw.githubusercontent.com/ChristineHsieh1231/mii/master/Educational%20Attainment.csv", 
+     col_types = cols(X10 = col_number(), 
+         X11 = col_number(), X12 = col_number(), 
+         X13 = col_number(), X14 = col_number(), 
+         X15 = col_number(), X16 = col_number(), 
+         X17 = col_number(), X18 = col_number(), 
+         X19 = col_number(), X2 = col_number(), 
+         X20 = col_number(), X21 = col_number(), 
+         X22 = col_number(), X23 = col_number(), 
+         X24 = col_number(), X25 = col_number(), 
+         X26 = col_number(), X27 = col_number(), 
+         X28 = col_number(), X3 = col_number(), 
+         X4 = col_number(), X5 = col_number(), 
+         X6 = col_number(), X7 = col_number(), 
+         X8 = col_number(), X9 = col_number()))
 edu = filter(edu, Year<2017)
 edu = filter(edu, Year>1996)
 crimeb = filter(crimerate, year>1996)
@@ -69,33 +83,33 @@ crimeb = filter(crimeb, year<2017)
 edu = edu %>%
   rename(
     year = Year,
-    t = X,
-    m = X.1,
-    f = X.2,
-    t0 = X.3,
-    m0 = X.4,
-    f0 = X.5,
-    s = X.6,
-    ms = X.7,
-    fs = X.8,
-    t1 =  X.9,
-    m1 = X.10,
-    f1 = X.11,
-    t2 = X.12,
-    m2 = X.13,
-    f2 = X.14,
-    t3 = X.15, 
-    m3 = X.16,
-    f3 = X.17,
-    t4 = X.18,
-    m4 = X.19,
-    f4 = X.20,
-    t5 = X.21,
-    m5 = X.22,
-    f5 = X.23,
-    t8 = X.24,
-    m8 = X.25,
-    f8 = X.26
+    t = X2,
+    m = X3,
+    f = X4,
+    t0 = X5,
+    m0 = X6,
+    f0 = X7,
+    s = X8,
+    ms = X9,
+    fs = X10,
+    t1 = X11,
+    m1 = X12,
+    f1 = X13,
+    t2 = X14,
+    m2 = X15,
+    f2 = X16,
+    t3 = X17, 
+    m3 = X18,
+    f3 = X19,
+    t4 = X20,
+    m4 = X21,
+    f4 = X22,
+    t5 = X23,
+    m5 = X24,
+    f5 = X25,
+    t8 = X26,
+    m8 = X27,
+    f8 = X28
     
   )
     
@@ -127,12 +141,15 @@ edus = edu %>% select(year,s,ms,fs) %>%
 edu8 = edu %>% select(year,t8,m8,f8) %>%
     mutate(class = "other")%>% rename(t=t8, m=m8,f=f8)
 edue = rbind(edu0,edu1,edu2,edu3,edu4,edu5,edus,edu8)
-write.csv(edue,file="C:/Users/E15_W7/Desktop/edue.csv",row.names = FALSE)
+
+head(edue)
+
 ```
 
 ```{r}
-ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
+fig=ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
   geom_line()+
   geom_point()
+fig
 ```
 
