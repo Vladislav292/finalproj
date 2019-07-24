@@ -195,3 +195,41 @@ cor(plot2$male,plot2$m)
 cor(plot2$female,plot2$f)
 cor(data_merged$year,data_merged$t)
 ```
+
+
+```{r}
+primary = CRIMECLASS %>% select(year,primary) %>% 
+    mutate(class = "primary") %>% rename(CL=primary)
+
+junior = CRIMECLASS%>%select(year,junior)%>%
+  mutate(class="junior")%>% rename(CL=junior)
+seniorv = CRIMECLASS%>%select(year,seniorv)%>%
+  mutate(class="seniorv")%>% rename(CL=seniorv)
+senior = CRIMECLASS%>%select(year,senior)%>%
+  mutate(class="senior")%>% rename(CL=senior)
+vocational = CRIMECLASS%>%select(year,vocational)%>%
+  mutate(class="vocational")%>% rename(CL=vocational)
+juniorca = CRIMECLASS%>%select(year,juniorca)%>%
+  mutate(class="juniorca")%>% rename(CL=juniorca)
+junior.1 = CRIMECLASS%>%select(year,junior.1)%>%
+  mutate(class="junior.1")%>% rename(CL=junior.1)
+universitya = CRIMECLASS%>%select(year,universitya)%>%
+  mutate(class="universitya")%>% rename(CL=universitya)
+
+CRI1 = rbind(primary,seniorv,senior,vocational,juniorca,junior.1,universitya)
+
+head(CRI1)
+
+```
+
+```{r}
+ggplot(data = CRI1,aes(x = year, y = CL ,color=class ,group = class)) +
+  geom_line()+
+  geom_point()
+```
+
+```{r}
+cor(edu3$t,seniorv$CL)
+cor(edu2$t,junior$CL)
+```
+  
