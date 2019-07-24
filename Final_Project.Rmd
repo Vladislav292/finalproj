@@ -1,29 +1,35 @@
 ---
-title: "Relationship Between Crime Rate , Gross Domastic Product and Unemployment rate in Taiwan"
+title: "Relationship Between Crime Rate , Gross Domastic Product, Unemployment ,Gender,and Education in Taiwan"
 author: "Christine Hsieh, May Huang, Yi-Fang Lo"
 date: "7/22/2019"
-output: html_document
+output: pdf_document
 ---
-# Objective: There are 
-# Data about Crimes committed in Taiwan
-First import the data about crimes in Taiwan
-[source]()
-Chinese characters were removced to avoid encoding and compatibility issue
+# Objective:
+There are many factors that lead to the fluctuations of number of crime, and as many people assert that education and economic circumstances are some factors that we are interested in. In the report, we analysed the relationship betwwen crime, GDP,Education ,and Unemployment to see if obvious relationship can be seen.
+
+## Install library needed
 
 ```{r warning=FALSE,message=FALSE} 
 rm(list=ls())
 library(readr)
 library(tidyverse )
-
 library(dplyr)
 ```
-
+## Data about Crimes and Education in Taiwan
+First import the data about [GDP in Taiwn](http://statdb.dgbas.gov.tw/pxweb/Dialog/NI.asp)
 
 ```{r}
 GDP <- read_csv("https://raw.githubusercontent.com/Vladislav292/2019summer-datasciece/master/GDP.csv", )
 head(GDP)
 ```
 
+## Import the data about Crime and Education and clean it
+[source](https://www.npa.gov.tw/NPAGip/wSite/lp?ctNode=12902&CtUnit=2666&BaseDSD=7)
+Steps <br/>
+1. read.csv <br/>
+2. assing proper data type <br/>
+3. filter the years we need <br/>
+4. rename the columns <br/>
 
 
 ```{r}
@@ -79,34 +85,43 @@ edu = edu %>%
     
    
 ```
+## Merge two sets of data for further analysis
 
-
+Merge by parameter "year"
 ```{r warning=FALSE,message=FALSE}
 data_merged <-merge(edu, GDP,by="year")
 head(data_merged)
 ```
 
 
+## Plotting
 
-
+Disposible income(a portion of GDP that can actually be used) - year <br/>
+unit di Million NTD
 
 ```{r}
 ggplot(data = data_merged)+
 geom_line(mapping=aes(x=year,y=di,group=1))+geom_point(mapping = aes(x=year,y=di))
 ```
 
+Crime-year
+
 ```{r}
 ggplot(data = data_merged)+
 geom_line(mapping=aes(x=year,y=t,group=1))+geom_point(mapping = aes(x=year,y=t))
 ```
 
+Disposible income(a portion of GDP that can actually be used) - Crime <br/>
+unit di Million NTD <br/>
+Since no obvious relationship between the two factors can be seen, we moved to the other one-education.
 
 ```{r}
 ggplot(data = data_merged)+
 geom_line(mapping=aes(x=di,y=t,group=1))+geom_point(mapping = aes(x=di,y=t))
 ```
 
-
+Make another dataframe to plot the following graph <br>
+work summery: create a new column to enable ggplot to group by "class"
 
 ```{r}
 edu0 = edu %>% select(year,t0,m0,f0) %>% 
@@ -126,15 +141,20 @@ edus = edu %>% select(year,s,ms,fs) %>%
 edu8 = edu %>% select(year,t8,m8,f8) %>%
     mutate(class = "other")%>% rename(t=t8, m=m8,f=f8)
 edue = rbind(edu0,edu1,edu2,edu3,edu4,edu5,edus,edu8)
-edue$class=factor(edue$class,levels = c("grad","undergrad","senior","junior","primary","self","illiterate","other" ), ordered = TRUE )
 head(edue)
 ```
+
+Plotting year-education-Crime relationship <br/>
+It can easily be seen that people with only high school offend the law more frequently.
 
 ```{r}
 ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
   geom_line()+
   geom_point()
 ```
+
+Plotting Gender - Crime relationship <br/>
+conclusion: Men violate the Law much more frequently than women do
 
 
 ```{r}
@@ -151,22 +171,10 @@ geom_point()
 
 
 ```
-```{r}
-sigma=data.frame(colSums(edu[,-1]))
 
-```
-
-
-```{r}
-
-edumale = edue %>% select(year,m,t,class) %>% 
-    mutate(gender = "male") %>% rename(count = m)
-edufemale = edue %>% select(year,f,t,class) %>%
-    mutate(gender = "female") %>%rename(count = f)
-edugen = rbind(edumale,edufemale)
-edugen=edugen%>% mutate(p=count/t)
-head(edugen)
-```
+## Unemployment and Crime
+Data importing , cleaning and plotting <br/>
+Graph :total unemployment and crime
 
 ```{r}
 uneply=read.csv("https://raw.githubusercontent.com/Vladislav292/finalproj/master/uneply.csv")
@@ -176,18 +184,31 @@ geom_smooth(mapping=aes(x=total,y=t))+
 geom_point(mapping =aes(x=total,y=t))
 ```
 
+Graph: female unemployment and crime
+
 ```{r}
 ggplot(data=plot2)+
 geom_smooth(mapping=aes(x=male,y=m))+
 geom_point(mapping =aes(x=male,y=m))
 ```
 
+Graph: female unemployment and crime
 
 ```{r}
 ggplot(data=plot2)+
 geom_smooth(mapping=aes(x=female,y=f),model=lm)+
 geom_point(mapping =aes(x=female,y=f))
 ```
+
+
+## Correlation Coefficients 
+1.GDP-Crime <br/>
+2.Unemployment-Crime <br/>
+3.Male unemployment- Male crime<br/>
+4.Female unemployment-Female crime<br/>
+5.year- crime<br/>
+
+
 ```{r}
 cor(data_merged$di,data_merged$t)
 cor(plot2$total,data_merged$t)
@@ -196,46 +217,22 @@ cor(plot2$female,plot2$f)
 cor(data_merged$year,data_merged$t)
 ```
 
-```{r}
-CRIMECLASS<-uneply%>%select(year,primary,junior,seniorv,senior,vocational,juniorca,junior.1,universitya)
+## Conclusions
+1.As GDP increases, Crime increases. This might not be a good conclusion since GDP increase with year and crime also increases with year and the latter has a greater correlation coeeficient. <br/>
+2.High school graduates violate the law more often than other groups do .<br/>
+3.Men violates the law more ofen than women do.<br/>
+4.The unemployment-crime correlation is more obvious in women than in men. <br/>
+5.There is only little correlation in unemployment and crime.<br/>
 
-CRIMECLASS  
-```
+## To the authority
+1.Getting a lot of money (aka. FADATSAI) cannot stop people from violating our law. <br/>
+2.Education is relatively important compared to other factors.
+
+## Possible further research
+1. Why Crime increases with year, are people today more disobedient than before?
+2. Why is the unemployment-crime correlation more obvious in women than in men?
+3. What caused a soar in crime during 2003-2007?
 
 
-```{r}
-primary = CRIMECLASS %>% select(year,primary) %>% 
-    mutate(class = "primary") %>% rename(CL=primary)
-
-junior = CRIMECLASS%>%select(year,junior)%>%
-  mutate(class="junior")%>% rename(CL=junior)
-seniorv = CRIMECLASS%>%select(year,seniorv)%>%
-  mutate(class="seniorv")%>% rename(CL=seniorv)
-senior = CRIMECLASS%>%select(year,senior)%>%
-  mutate(class="senior")%>% rename(CL=senior)
-vocational = CRIMECLASS%>%select(year,vocational)%>%
-  mutate(class="vocational")%>% rename(CL=vocational)
-juniorca = CRIMECLASS%>%select(year,juniorca)%>%
-  mutate(class="juniorca")%>% rename(CL=juniorca)
-junior.1 = CRIMECLASS%>%select(year,junior.1)%>%
-  mutate(class="junior.1")%>% rename(CL=junior.1)
-universitya = CRIMECLASS%>%select(year,universitya)%>%
-  mutate(class="universitya")%>% rename(CL=universitya)
-
-CRI1 = rbind(primary,seniorv,senior,vocational,juniorca,junior.1,universitya)
-
-head(CRI1)
-
-```
-
-```{r}
-ggplot(data = CRI1,aes(x = year, y = CL ,color=class ,group = class)) +
-  geom_line()+
-  geom_point()
-```
-
-```{r}
-cor(edu3$t,seniorv$CL)
-cor(edu2$t,junior$CL)
-```
   
+
