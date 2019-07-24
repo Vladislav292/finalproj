@@ -196,6 +196,12 @@ cor(plot2$female,plot2$f)
 cor(data_merged$year,data_merged$t)
 ```
 
+```{r}
+CRIMECLASS<-uneply%>%select(year,primary,junior,seniorv,senior,vocational,juniorca,junior.1,universitya)
+
+CRIMECLASS  
+```
+
 
 ```{r}
 primary = CRIMECLASS %>% select(year,primary) %>% 
