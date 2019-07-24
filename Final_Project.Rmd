@@ -126,6 +126,7 @@ edus = edu %>% select(year,s,ms,fs) %>%
 edu8 = edu %>% select(year,t8,m8,f8) %>%
     mutate(class = "other")%>% rename(t=t8, m=m8,f=f8)
 edue = rbind(edu0,edu1,edu2,edu3,edu4,edu5,edus,edu8)
+edue$class=factor(edue$class,levels = c("grad","undergrad","senior","junior","primary","self","illiterate","other" ), ordered = TRUE )
 head(edue)
 ```
 
