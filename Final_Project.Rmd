@@ -1,9 +1,10 @@
 ---
-title: "Relationship Between Crime Rate and Gross Domastic Product in Taiwan"
+title: "Relationship Between Crime Rate , Gross Domastic Product and Unemployment rate in Taiwan"
 author: "Christine Hsieh, May Huang, Yi-Fang Lo"
 date: "7/22/2019"
 output: html_document
 ---
+# Objective: There are 
 # Data about Crimes committed in Taiwan
 First import the data about crimes in Taiwan
 [source]()
@@ -91,12 +92,18 @@ head(data_merged)
 
 ```{r}
 ggplot(data = data_merged)+
-geom_line(mapping=aes(x=year,y=GDP,group=1))+geom_point(mapping = aes(x=year,y=GDP))
+geom_line(mapping=aes(x=year,y=di,group=1))+geom_point(mapping = aes(x=year,y=di))
 ```
 
 ```{r}
 ggplot(data = data_merged)+
-geom_line(mapping=aes(x=GDP,y=t,group=1))+geom_point(mapping = aes(x=GDP,y=t))
+geom_line(mapping=aes(x=year,y=t,group=1))+geom_point(mapping = aes(x=year,y=t))
+```
+
+
+```{r}
+ggplot(data = data_merged)+
+geom_line(mapping=aes(x=di,y=t,group=1))+geom_point(mapping = aes(x=di,y=t))
 ```
 
 
@@ -132,7 +139,7 @@ ggplot(data = edue,aes(x = year, y = t ,color=class ,group = class)) +
 ```{r}
 gender<-edu %>%
   select(year,t,m,f) %>% 
-    mutate(fp = (f / t)*100, mp = (m / t)*100)
+    mutate(fp = f / t, mp = m / t)
 gendera= gender %>% select(year,fp)%>% mutate(gender="female")%>% rename(p=fp)
 genderb= gender %>% select(year,mp)%>% mutate(gender="male")%>% rename(p=mp)
 gender= rbind(gendera,genderb)
@@ -158,4 +165,32 @@ edufemale = edue %>% select(year,f,t,class) %>%
 edugen = rbind(edumale,edufemale)
 edugen=edugen%>% mutate(p=count/t)
 head(edugen)
+```
+
+```{r}
+uneply=read.csv("https://raw.githubusercontent.com/Vladislav292/finalproj/master/uneply.csv")
+plot2 = merge(edu,uneply,by="year")
+ggplot(data=plot2)+
+geom_smooth(mapping=aes(x=total,y=t))+
+geom_point(mapping =aes(x=total,y=t))
+```
+
+```{r}
+ggplot(data=plot2)+
+geom_smooth(mapping=aes(x=male,y=m))+
+geom_point(mapping =aes(x=male,y=m))
+```
+
+
+```{r}
+ggplot(data=plot2)+
+geom_smooth(mapping=aes(x=female,y=f),model=lm)+
+geom_point(mapping =aes(x=female,y=f))
+```
+```{r}
+cor(data_merged$di,data_merged$t)
+cor(plot2$total,data_merged$t)
+cor(plot2$male,plot2$m)
+cor(plot2$female,plot2$f)
+cor(data_merged$year,data_merged$t)
 ```
